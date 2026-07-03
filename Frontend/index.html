@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UT Research Finder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            color: #bf5700;  /* UT burnt orange */
+        }
+
+        #search {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        .study-card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #bf5700;
+        }
+
+        .study-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .study-compensation {
+            color: green;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .study-date {
+            color: gray;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .study-description {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>UT Research Finder</h1>
+    <p>Find research studies at UT Austin that match your interests.</p>
+
+    <input type="text" id="search" placeholder="Search studies...">
+
+    <div id="studies-container"></div>
+
+    <script>
+        // Fetch studies from our Flask API
+        async function loadStudies() {
+            const response = await fetch("http://127.0.0.1:5000/studies");
+            const studies = await response.json();
+            displayStudies(studies);
+        }
+
+        // Display studies on the page
+        function displayStudies(studies) {
+            const container = document.getElementById("studies-container");
+            container.innerHTML = "";
+
+            studies.forEach(study => {
+                const card = document.createElement("div");
+                card.className = "study-card";
+                card.innerHTML = `
+                    <div class="study-title">${study.title}</div>
+                    <div class="study-date">Posted: ${study.date}</div>
+                    <div class="study-compensation">${study.compensation || "Compensation not listed"}</div>
+                    <div class="study-description">${study.description.substring(0, 200)}...</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Search functionality
+        document.getElementById("search").addEventListener("input", async function() {
+            const query = this.value.toLowerCase();
+            const response = await fetch("http://127.0.0.1:5000/studies");
+            const studies = await response.json();
+            const filtered = studies.filter(study =>
+                study.title.toLowerCase().includes(query) ||
+                study.description.toLowerCase().includes(query)
+            );
+            displayStudies(filtered);
+        });
+
+        // Load studies when page opens
+        loadStudies();
+    </script>
+
+</body>
+</html>
