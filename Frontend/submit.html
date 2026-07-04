@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit a Study | UT Research Finder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            color: #bf5700;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: #bf5700;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #a04800;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+
+        a {
+            color: #bf5700;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Submit a Research Study</h1>
+    <p>Are you a UT researcher? Submit your study to reach more potential participants.</p>
+    <p><a href="index.html">← Back to study listings</a></p>
+
+    <div class="form-group">
+        <label>Study Title *</label>
+        <input type="text" id="title" placeholder="e.g. Paid Study on Anxiety in College Students">
+    </div>
+
+    <div class="form-group">
+        <label>Description *</label>
+        <textarea id="description" placeholder="Describe the purpose and procedure of your study..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Eligibility Requirements</label>
+        <textarea id="eligibility" placeholder="e.g. Ages 18-30, UT students only, no history of seizures..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Compensation</label>
+        <input type="text" id="compensation" placeholder="e.g. $20 gift card, course credit, unpaid">
+    </div>
+
+    <div class="form-group">
+        <label>Contact Information *</label>
+        <input type="text" id="contact" placeholder="e.g. researcher@utexas.edu or 512-555-1234">
+    </div>
+
+    <button onclick="submitStudy()">Submit Study</button>
+
+    <p id="message"></p>
+
+    <script>
+        async function submitStudy() {
+            // Get values from each field
+            const title = document.getElementById("title").value.trim();
+            const description = document.getElementById("description").value.trim();
+            const eligibility = document.getElementById("eligibility").value.trim();
+            const compensation = document.getElementById("compensation").value.trim();
+            const contact = document.getElementById("contact").value.trim();
+
+            const message = document.getElementById("message");
+
+            // Basic frontend validation
+            if (!title || !description || !contact) {
+                message.textContent = "Please fill in all required fields (marked with *)";
+                message.className = "error";
+                return;
+            }
+
+            // Send data to Flask API
+            const response = await fetch("http://127.0.0.1:5000/submit", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    title, description, eligibility, compensation, contact
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                message.textContent = "Study submitted successfully! It will appear in the listings shortly.";
+                message.className = "success";
+                // Clear the form
+                document.getElementById("title").value = "";
+                document.getElementById("description").value = "";
+                document.getElementById("eligibility").value = "";
+                document.getElementById("compensation").value = "";
+                document.getElementById("contact").value = "";
+            } else {
+                message.textContent = "Error: " + result.error;
+                message.className = "error";
+            }
+        }
+    </script>
+
+</body>
+</html>

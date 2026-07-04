@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from datetime import date
 import sqlite3 
 import json
 
@@ -37,6 +38,40 @@ def get_studies():
         })
 
     return jsonify(studies)
+
+# new route that acceots form submissions
+@app.route("/submit", methods=["POST"])
+def submit_study():
+    data = request.get_json()
+    today = date.today().strftime("%m/%d/%Y")
+
+    title = data.get("title")
+    description = data.get("description")
+    eligibility = data.get("eligibility")
+    compensation = data.get("compensation")
+    contact = data.get("contact")
+
+    # make sure required fields are filled
+    if not title or not description or not contact:
+        return jsonify({"error": "Title, description, and contact are required"}), 400
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO studies (title, date, description, eligibility, compensation, contact)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (
+        title,
+        today,
+        description,
+        json.dumps([eligibility]),
+        compensation,
+        contact
+    ))
+    conn.commit()
+    conn.close()
+
+    return jsonify({"message": "Study submitted successfully"}), 201
 
 # run the app and server restarts automatically when code is changed
 if __name__ == "__main__":
