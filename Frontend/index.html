@@ -95,6 +95,8 @@
 
     <input type="text" id="search" placeholder="Search studies...">
 
+
+    <p id="study-count"></p>
     <div id="studies-container"></div>
 
     <script>
@@ -142,6 +144,9 @@
         function displayStudies(studies) {
             const container = document.getElementById("studies-container");
             container.innerHTML = "";
+
+            document.getElementById("study-count").textContent = `Showing ${studies.length} ${studies.length === 1 ? "study" : "studies"}`;
+
 
             if(studies.length === 0) {
                 container.innerHTML = "<p>No studies found.</p>";
