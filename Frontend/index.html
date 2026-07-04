@@ -17,6 +17,20 @@
             color: #bf5700;  
         }
 
+        button {
+            margin-top: 10px;
+            padding: 6px 12px;
+            background-color: #bf5700;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #a04800;
+        }
+
         #search {
             width: 100%;
             padding: 10px;
@@ -89,6 +103,7 @@
             const response = await fetch("http://127.0.0.1:5000/studies");
             allStudies = await response.json();
             displayStudies(sortStudies(filterStudies(allStudies)));
+            toggleDetails(id); 
         }
 
         // Filter studies based on compensation & age
@@ -128,6 +143,11 @@
             const container = document.getElementById("studies-container");
             container.innerHTML = "";
 
+            if(studies.length === 0) {
+                container.innerHTML = "<p>No studies found.</p>";
+                return; 
+            }
+
             studies.forEach(study => {
                 const card = document.createElement("div");
                 card.className = "study-card";
@@ -136,9 +156,31 @@
                     <div class="study-date">Posted: ${study.date}</div>
                     <div class="study-compensation">${study.compensation || "Compensation not listed"}</div>
                     <div class="study-description">${study.description.substring(0, 200)}...</div>
+                    <div class="study-details" id="details-${study.id}" style="display:none;">
+                        <hr>
+                        <p><strong>Full Description:</strong> ${study.description}</p>
+                        <p><strong>Eligibility:</strong></p>
+                        <ul>
+                            ${study.eligibility.map(item => `<li>${item}</li>`).join("")}
+                        </ul>
+                        <p><strong>Contact:</strong> ${study.contact || "No contact info listed"}</p>
+                    </div>
+                    <button onclick="toggleDetails(${study.id})" id="btn-${study.id}">Show More</button>
                 `;
                 container.appendChild(card);
             });
+        }
+
+        function toggleDetails(id) {
+            const details = document.getElementById(`details-${id}`);
+            const btn = document.getElementById(`btn-${id}`);
+            if (details.style.display === "none") {
+                details.style.display = "block";
+                btn.textContent = "Show Less";
+            } else {
+                details.style.display = "none";
+                btn.textContent = "Show More";
+            }
         }
 
         document.getElementById("search").addEventListener("input", function() {
