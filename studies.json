@@ -1,6 +1,7 @@
 [
   {
     "title": "Paid Research Study on Bipolar Disorder and Alcohol: Young Adults Needed",
+    "category": "Bipolar Disorder",
     "date": "6/18/2025",
     "description": "Sciences is studying how brain biology is related to possible risk for developing bipolar disorder. This is an NIH funded study conducted by UT Dell Medical School Department of Psychiatry & Behavioral Sciences that uses alcohol administration and MRI to investigate response to alcohol and brain development in young adults with bipolar disorder. ",
     "eligibility": [
@@ -15,6 +16,7 @@
   },
   {
     "title": "Paid Research Study on Anxiety Disorders (CGRI Anxiety Study)",
+    "category": "Generalized Anxiety Disorder",
     "date": "5/18/2026",
     "description": "Description (purpose of the study):Researchers at The University of Texas at Austin are conducting a randomized parallel-group clinical trial investigating capnometry-guided respiratory intervention (CGRI) for pathological anxiety. CGRI aims to raise end-tidal CO2 levels to reduce hyperventilation-induced respiratory alkalosis and related fear-eliciting physical reactions. Psycho-education about anxiety and its effects (PsyEd) will serve as a comparison intervention. Study Procedure:\nParticipants will be randomly assigned to either the CGRI intervention group or a psycho-education comparison group. The study includes study appointments at the research laboratory and assessments related to anxiety symptoms and respiratory functioning. ",
     "eligibility": [
@@ -46,6 +48,7 @@
   },
   {
     "title": "CO2 Reactivity as a Biomarker of Non-Response to Exposure-Based Therapy",
+    "category": "Generalized Anxiety Disorder",
     "date": "6/18/2025",
     "description": "Description (purpose of the study):This study is designed to evaluate the predictive power of a novel biomarker based on a CO2 challenge, thus addressing the central question \"can this easy-to-administer assay aid clinicians in deciding whether or not to initiate exposure-based therapy?\" The investigation addresses an important public health issue by testing an accessible clinical assessment strategy--informed by basic research--that may lead to a more effective treatment selection (personalized medicine) for patients with anxiety- and fear-related disorders and enhance our understanding of the mechanisms governing exposure-based therapy. For More Information ",
     "eligibility": [
@@ -58,6 +61,7 @@
   },
   {
     "title": "Depression and Memory",
+    "category": "Healthy Adult \u2013 18-70 Years Old",
     "date": "6/18/2025",
     "description": "Description (purpose of the study):The Memory & Aging Lab in the Department of Psychology at UT Austin is conducting a brain MRI study to understand mood and memory changes across the adult lifespan. Study Procedure:This study uses brain MRIs to measure the relationship between mood and memory in the brain. We will ask you to come into the lab three times over 2 weeks for no more than 3 hours each time. If you are 65 years of age or older, we will ask you to return for a 4th visit in 2 years for some additional memory assessments and mood and health questions. ",
     "eligibility": [],
@@ -66,6 +70,7 @@
   },
   {
     "title": "Childhood Trauma, Dance Exercise, and Neurocognitive Performance",
+    "category": "Healthy Adult \u2013 18-70 Years Old",
     "date": "7/31/2025",
     "description": "Description (purpose of the study):This study is investigating the effects of acute exercise on cognition in young adults who are at risk for early cognitive decline due to a history of certain adverse childhood experiences (ACEs; here, abuse or neglect as a child). Participants are asked to dance and stretch, complete questionnaires, and undergo neuropsychological testing. ",
     "eligibility": [
@@ -80,6 +85,7 @@
   },
   {
     "title": "Paid Research Study on Major Depressive Disorder (AMPA-VEGA Study)",
+    "category": "Major Depression / Treatment Resistant Depression",
     "date": "5/20/2026",
     "description": "Description (purpose of the study):Researchers are conducting a randomized, double-blind, placebo-controlled study evaluating NBI-1065845 as an adjunctive treatment for Major Depressive Disorder (MDD). The primary goal of the study is to evaluate whether NBI-1065845 may help delay the relapse of depressive symptoms in participants with MDD who previously showed a stable response during open-label treatment with the medication. Study Procedure:Participants will receive either NBI-1065845 or placebo in addition to their current antidepressant medication as part of a randomized and blinded study. The study includes study visits, assessments related to depressive symptoms and monitoring throughout participation. ",
     "eligibility": [
@@ -93,6 +99,7 @@
   },
   {
     "title": "Paid Research Study on Depression Treatment Response (Sertraline/Zoloft Study)",
+    "category": "Major Depression / Treatment Resistant Depression",
     "date": "5/15/2026",
     "description": "Description (purpose of the study):The Department of Psychiatry and Behavioral Sciences at The University of Texas at Austin is conducting a research study to identify brain biomarkers and characteristics that may predict individual responses to treatment for major depression with sertraline (Zoloft), a commonly prescribed SSRI antidepressant. The study includes MRI and EEG assessments to better understand treatment response in individuals with chronic or recurrent depression. Study Procedure:Participants will complete study visits that include clinical interviews, questionnaires, MRI scans, EEG procedures, and treatment with sertraline (Zoloft). Researchers will assess brain activity and other biomarkers related to depression treatment response. ",
     "eligibility": [
@@ -112,6 +119,7 @@
   },
   {
     "title": "Paid Research Study on Depression (Alto MDD)",
+    "category": "Major Depression / Treatment Resistant Depression",
     "date": "12/18/2025",
     "description": "Description (purpose of the study):The Department of Psychiatry and Behavioral Sciences at The University of Texas at Austin is conducting a randomized, double-blind, placebo-controlled research study of ALTO-300 in adults with Major Depressive Disorder (MDD). The study aims to evaluate the safety and effectiveness of ALTO-300 compared to a placebo, with an optional open-label extension. Study Procedure:The study includes a screening period of up to 6 weeks, followed by a double-blind randomized treatment period. After completing the double-blind phase, participants may choose to enter an open-label extension and receive ALTO-300 for an additional 8 weeks. The study includes biomarker assessments such as EEG, neurocognitive testing, and activity and sleep monitoring. ",
     "eligibility": [
@@ -129,6 +137,7 @@
   },
   {
     "title": "TMS Depression Study",
+    "category": "Major Depression / Treatment Resistant Depression",
     "date": "6/23/2025",
     "description": "Description (purpose of the study):This study is exploring the use of Truncated SAINT (Stanford Accelerated Intelligent Neuromodulation Therapy) as a first-line treatment for adolescent depression. For More Information ",
     "eligibility": [
@@ -141,6 +150,7 @@
   },
   {
     "title": "Texas Youth Depression and Suicide Research Network (YDSRN)",
+    "category": "Major Depression / Treatment Resistant Depression",
     "date": "6/23/2025",
     "description": "Description (purpose of the study):The Texas YDSRN is a research initiative of the Texas Child Mental Health Care Consortium (TCMHCC), which was created by the 86th Texas Legislature.  This is a study with a goal to advance care for depression and suicide for children and adolescents in Texas. For More Information The Activ8 study (behavioral activation skills training for depression) is a substudy under TX-YDSRN. This is an 8-10 week virtually delivered treatment for depression. For More Information ",
     "eligibility": [
@@ -157,6 +167,7 @@
   },
   {
     "title": "Postpartum Depression Treatment Study",
+    "category": "Postpartum Depression",
     "date": "01/14/2026",
     "description": "Description (purpose of the study):The University of Texas at Austin is conducting a research study to evaluate a new treatment approach for postpartum depression (PPD). This study uses an accelerated form of transcranial magnetic stimulation (TMS), called SAINT, which targets specific brain regions involved in mood regulation. The goal is to determine whether the SAINT-TMS system is effective for individuals with PPD who have not experienced adequate relief from previous treatments. Study Procedure:Participants will receive SAINT-TMS treatment for five consecutive days. Treatment sessions may total up to 10 hours per day. The study also includes MRI scans and clinical assessments to evaluate treatment response. ",
     "eligibility": [
@@ -174,6 +185,7 @@
   },
   {
     "title": "MAMA Study",
+    "category": "Pregnancy",
     "date": "11/19/2025",
     "description": "Description (purpose of the study):The MAMA study aims to examine changes in the pancreas that occur during pregnancy, in both pregnant mothers and their babies, and determine how those changes are affected by diabetes. For More Information ",
     "eligibility": [
@@ -187,6 +199,7 @@
   },
   {
     "title": "Paid Research Study on PTSD and Brain Function",
+    "category": "PTSD/Trauma",
     "date": "5/16/2026",
     "description": "Description (purpose of the study):The Department of Psychiatry and Behavioral Sciences at The University of Texas at Austin is conducting a research study to examine how trauma-focused psychotherapy changes brain function in individuals with posttraumatic stress disorder (PTSD). Researchers aim to better understand how changes in brain circuitry may improve the ability to experience positive emotions following traumatic or extremely stressful life events. Study Procedure:\nParticipants will complete clinical interviews, repeated assessments, and functional magnetic resonance imaging (fMRI) scans. Some participants may be placed in a delayed treatment group as part of the study design. ",
     "eligibility": [
@@ -209,6 +222,7 @@
   },
   {
     "title": "Texas Childhood Trauma Research Network (TX-CTRN)",
+    "category": "PTSD/Trauma",
     "date": "6/23/2025",
     "description": "Description (purpose of the study):The Texas CTRN is a research initiative of the Texas Child Mental Health Care Consortium (TCMHCC), which was created by the 86th Texas Legislature. This is a study with a goal to better understand trajectories and outcomes of trauma experienced in childhood. For More Information ",
     "eligibility": [
@@ -221,6 +235,7 @@
   },
   {
     "title": "Neurocognitive Function in Trauma Exposed Adolescents (NFTEA)",
+    "category": "PTSD/Trauma",
     "date": "7/9/2025",
     "description": "Description (purpose of the study):The Department of Psychiatry and Behavioral Sciences at UT Austin is conducting a research study on how trauma affects brain function. The study may involve interviews, questionnaires, memory and thinking tests, brain scans and saliva collection. Participants may be asked to: ",
     "eligibility": [
@@ -232,6 +247,7 @@
   },
   {
     "title": "Paid Research Study on Self-Injury Story Sharing and Support Seeking",
+    "category": "Self-Injurious Thoughts or Behaviors",
     "date": "5/22/2026",
     "description": "Description (purpose of the study):Researchers at The University of Texas at Austin are developing a questionnaire about how young adults share their stories about self-injury and seek support from others. The study involves one-on-one Zoom interviews to help ensure the questionnaire questions are clear and easy to understand. Study participation includes: ",
     "eligibility": [
@@ -245,6 +261,7 @@
   },
   {
     "title": "Paid Research Study: Mobile App to Support Youth with Self-Injurious Thoughts or Behaviors",
+    "category": "Self-Injurious Thoughts or Behaviors",
     "date": "10/16/2025",
     "description": "Description (purpose of the study):The Department of Psychiatry and Behavioral Sciences at Dell Medical School, The University of Texas at Austin, is conducting a research study led by Yoon Jae Cho, MD, MPH. The study explores a mobile phone app designed to support young people who experience self-injurious thoughts or behaviors. Using the app, participants can voice-record diary entries during moments of distress. The app\u2019s AI then suggests Dialectical Behavior Therapy (DBT) skills to help manage emotions. This research aims to develop innovative and accessible tools that support youth emotional well-being. This study is overseen by Dr. Young Shin Kim, Chair of Child and Adolescent Psychiatry at Dell Medical School. Study Details ",
     "eligibility": [

@@ -34,7 +34,8 @@ def get_studies():
             "description": row["description"],
             "eligibility": json.loads(row["eligibility"]) if row["eligibility"] else [],
             "compensation": row["compensation"],
-            "contact": row["contact"]
+            "contact": row["contact"],
+            "category": row["category"]
         })
 
     return jsonify(studies)
@@ -50,6 +51,7 @@ def submit_study():
     eligibility = data.get("eligibility")
     compensation = data.get("compensation")
     contact = data.get("contact")
+    category = data.get("category", "Uncategorized") 
 
     # make sure required fields are filled
     if not title or not description or not contact:
@@ -58,15 +60,16 @@ def submit_study():
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""
-        INSERT INTO studies (title, date, description, eligibility, compensation, contact)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO studies (title, date, description, eligibility, compensation, contact, category)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     """, (
         title,
         today,
         description,
         json.dumps([eligibility]),
         compensation,
-        contact
+        contact,
+        category
     ))
     conn.commit()
     conn.close()

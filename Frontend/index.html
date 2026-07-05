@@ -31,6 +31,15 @@
             background-color: #a04800;
         }
 
+        select {
+            padding: 8px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            margin-right: 10px;
+        }
+
         #search {
             width: 100%;
             padding: 10px;
@@ -38,6 +47,10 @@
             margin-bottom: 20px;
             margin-top: 20px;
             box-sizing: border-box;
+        }
+
+        #category-filter {
+            max-width: 150px;
         }
 
         .study-card {
@@ -89,6 +102,21 @@
         <option value="21">21+</option>
     </select>
 
+    <select id="category-filter">
+        <option value="all">All Categories</option>
+        <option value="Bipolar Disorder">Bipolar Disorder</option>
+        <option value="Generalized Anxiety Disorder">Generalized Anxiety Disorder</option>
+        <option value="Healthy Adult – 18-70 Years Old">Healthy Adult</option>
+        <option value="Major Depression / Treatment Resistant Depression">Major Depression</option>
+        <option value="Obsessive-Compulsive Disorder">OCD</option>
+        <option value="Panic Disorder">Panic Disorder</option>
+        <option value="Postpartum Depression">Postpartum Depression</option>
+        <option value="Pregnancy">Pregnancy</option>
+        <option value="PTSD/Trauma">PTSD/Trauma</option>
+        <option value="Self-Injurious Thoughts or Behaviors">Self-Injury</option>
+        <option value="Social Anxiety Disorder">Social Anxiety</option>
+    </select>
+
     <select id="sort-filter">
         <option value = "newest">Descending</option>
         <option value="oldest">Ascending</option>
@@ -114,6 +142,7 @@
             const query = document.getElementById("search").value.toLowerCase();
             const compensation = document.getElementById("compensation-filter").value;
             const age = document.getElementById("age-filter").value; 
+            const category = document.getElementById("category-filter").value;
 
             return studies.filter(study => {
                 const matchesSearch = study.title.toLowerCase().includes(query) ||
@@ -128,8 +157,10 @@
                 const matchesAge = age === "all" ||
                     (age === "18" && (eligibilityText.includes("18") || eligibilityText.includes("adults"))) ||
                     (age === "21" && eligibilityText.includes("21"));
+                
+                const matchesCategory = category === "all" || study.category === category;
 
-                return matchesSearch && matchesCompensation && matchesAge;
+                return matchesSearch && matchesCompensation && matchesAge && matchesCategory;
             });
         }
 
@@ -159,6 +190,7 @@
                 card.className = "study-card";
                 card.innerHTML = `
                     <div class="study-title">${study.title}</div>
+                    <div class="study-category" style="color: #bf5700; font-size: 14px; margin-bottom: 6px;">${study.category}</div>
                     <div class="study-date">Posted: ${study.date}</div>
                     <div class="study-compensation">${study.compensation || "Compensation not listed"}</div>
                     <div class="study-description">${study.description.substring(0, 200)}...</div>
@@ -202,6 +234,10 @@
         });
 
         document.getElementById("sort-filter").addEventListener("change", function() {
+            displayStudies(sortStudies(filterStudies(allStudies)));
+        });
+
+        document.getElementById("category-filter").addEventListener("change", function() {
             displayStudies(sortStudies(filterStudies(allStudies)));
         });
 
