@@ -1,5 +1,6 @@
 import requests
 import json
+import re
 
 # Query ClinicalTrials.gov API for actively recruiting UT Austin studies
 url = "https://clinicaltrials.gov/api/v2/studies"
@@ -69,7 +70,34 @@ for study in data.get("studies", []):
     
     title = protocol.get("identificationModule", {}).get("briefTitle", "")
     description = protocol.get("descriptionModule", {}).get("briefSummary", "")
-    eligibility = protocol.get("eligibilityModule", {}).get("eligibilityCriteria", "")
+    # remove escaped (/) characters from description
+    description = re.sub(r"\\([~><=#\-\*\.])", r"\1", description)
+    raw_eligibility = protocol.get("eligibilityModule", {}).get("eligibilityCriteria", "")
+
+    # split into inclusion and exclusion sections
+    eligibility_items = []
+    if raw_eligibility:
+        lines = raw_eligibility.split("\n")
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+            if line.lower().startswith("inclusion criteria") or line.lower().startswith("exclusion criteria"):
+                eligibility_items.append(f"**{line}**")
+            else:
+                line = line.replace("* ", "").replace("*", "").strip()
+                line = re.sub(r"^\d+\.\s*", "", line)
+                line = re.sub(r"^\\?-\s*", "", line)
+                line = re.sub(r"\\([~><=#\-\*\.])", r"\1", line)
+                if line:
+                    # if line ends with colon, treat as subheader
+                    if line.endswith(":"):
+                        eligibility_items.append(f"**{line}**")
+                    else:
+                        eligibility_items.append(f"  {line}")
+
+    eligibility = eligibility_items
+    
     min_age = protocol.get("eligibilityModule", {}).get("minimumAge", "")
     max_age = protocol.get("eligibilityModule", {}).get("maximumAge", "")
     nct_id = protocol.get("identificationModule", {}).get("nctId", "")
@@ -87,7 +115,7 @@ for study in data.get("studies", []):
         "title": title,
         "date": date,
         "description": description,
-        "eligibility": [eligibility],
+        "eligibility": eligibility,
         "compensation": "",
         "contact": contact,
         "category": category,

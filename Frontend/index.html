@@ -168,7 +168,7 @@
                 return matchesSearch && matchesCompensation && matchesAge && matchesCategory;
             });
         }
-        
+
         // Dynamically populate category filter
         function populateCategoryFilter(studies) {
             const select = document.getElementById("category-filter");
@@ -223,7 +223,12 @@
                         <p>${study.description.replace("Description (purpose of the study):", "").trim()}</p>
                         <p><strong>Eligibility:</strong></p>
                         <ul>
-                            ${study.eligibility.map(item => `<li>${item}</li>`).join("")}
+                            ${study.eligibility.map(item => {
+                                if (item.startsWith("**")) {
+                                    return `<li style="list-style:none; font-weight:bold; margin-top:8px;">${item.replace(/\*\*/g, "")}</li>`;
+                                }
+                                return `<li style="margin-left:20px;">${item.trim()}</li>`;
+                            }).join("")}
                         </ul>
                         <p><strong>Contact:</strong> ${study.contact.replace("Contact:", "").trim() || "No contact info listed"}</p>
                     </div>
