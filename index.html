@@ -192,6 +192,14 @@
             });
         }
 
+        function extractEmail(contact) {
+            if (!contact) return null;
+            const match = contact.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+            return match ? match[0] : null;
+        }
+
+
+
         
 
         function displayStudies(studies) {
@@ -231,6 +239,12 @@
                             }).join("")}
                         </ul>
                         <p><strong>Contact:</strong> ${study.contact.replace("Contact:", "").trim() || "No contact info listed"}</p>
+                        
+                        ${extractEmail(study.contact) ? `
+                            <a href="mailto:${extractEmail(study.contact)}?subject=${encodeURIComponent('Interest in Study: ' + study.title)}&body=${encodeURIComponent('Hello,\n\nI am a UT Austin student and I believe I meet the eligibility requirements for your study "' + study.title + '". I would love to learn more about the next steps to participate.\n\nThank you!')}">
+                                <button>Contact Researcher</button>
+                            </a>
+                        ` : ""}
                     </div>
                     <button onclick="toggleDetails(${study.id})" id="btn-${study.id}">Show More</button>
                 `;
