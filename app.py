@@ -3,6 +3,7 @@ from flask_cors import CORS
 from datetime import date
 import sqlite3 
 import json
+import os
 
 
 app = Flask(__name__) #creates the web app
@@ -78,4 +79,4 @@ def submit_study():
 
 # run the app and server restarts automatically when code is changed
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
