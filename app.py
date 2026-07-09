@@ -215,6 +215,36 @@ def save_profile():
 
     return jsonify({"message": "Profile saved successfully"}), 200
 
+@app.route("/profile", methods=["GET"])
+def get_profile():
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return jsonify({"error": "Not authenticated"}), 401
+
+    token_str = auth_header.split(" ")[1]
+
+    try:
+        payload = jwt.decode(token_str, SECRET_KEY, algorithms=["HS256"])
+        user_id = payload["user_id"]
+    except:
+        return jsonify({"error": "Invalid token"}), 401
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM profiles WHERE user_id = ?", (user_id,))
+    profile = cursor.fetchone()
+    conn.close()
+
+    if not profile:
+        return jsonify({"error": "No profile found"}), 404
+
+    return jsonify({
+        "age": profile["age"],
+        "major": profile["major"],
+        "interests": profile["interests"],
+        "availability": profile["availability"]
+    }), 200
+
 @app.route("/recommendations", methods=["GET"])
 def get_recommendations():
     auth_header = request.headers.get("Authorization")
