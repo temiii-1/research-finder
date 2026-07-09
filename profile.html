@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile | UT Research Finder</title>
+    <title>My Profile | Horns Research Hub</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -115,15 +115,23 @@
 </head>
 <body>
 
-    <div class="header-nav">
+    <!-- <div class="header-nav">
         <a href="index.html">← Back to studies</a>
         <div>
             <span id="user-email" style="margin-right: 15px; color: #555;"></span>
             <a href="#" onclick="logout()">Log out</a>
         </div>
-    </div>
+    </div> -->
 
-    <h1>My Profile</h1>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <a href="index.html" style="text-decoration: none;"><h1 style="margin: 0; color: #bf5700;">Horns Research Hub</h1></a>
+        <div>
+            <span id="user-email" style="margin-right: 15px; color: #555;"></span>
+            <a href="#" onclick="logout()">Log out</a>
+        </div>
+    </div>
+    <a href="index.html" style="margin-bottom: 10px; display: block;">← Back to studies</a>
 
     <!-- Profile Info Section -->
     <div class="profile-card">
@@ -179,7 +187,7 @@
     <div id="recommendations-container"></div>
 
     <script>
-        const API = "http://127.0.0.1:5000";
+        const API = "https://research-finder-fze4.onrender.com";
         const token = localStorage.getItem("token");
         const email = localStorage.getItem("email");
 
