@@ -371,6 +371,86 @@ def get_categories():
     conn.close()
     categories = [row["category"] for row in rows]
     return jsonify(categories)
+
+
+@app.route("/bookmarks", methods=["GET"])
+def get_bookmarks():
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return jsonify({"error": "Not authenticated"}), 401
+
+    token_str = auth_header.split(" ")[1]
+
+    try:
+        payload = jwt.decode(token_str, SECRET_KEY, algorithms=["HS256"])
+        user_id = payload["user_id"]
+    except:
+        return jsonify({"error": "Invalid token"}), 401
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT studies.* FROM studies
+        JOIN bookmarks ON studies.id = bookmarks.study_id
+        WHERE bookmarks.user_id = ?
+    """, (user_id,))
+    rows = cursor.fetchall()
+    conn.close()
+
+    studies = []
+    for row in rows:
+        studies.append({
+            "id": row["id"],
+            "title": row["title"],
+            "category": row["category"],
+            "date": row["date"],
+            "description": row["description"],
+            "compensation": row["compensation"],
+            "contact": row["contact"],
+            "eligibility": json.loads(row["eligibility"]) if row["eligibility"] else []
+        })
+
+    return jsonify(studies), 200
+
+
+@app.route("/bookmarks/<int:study_id>", methods=["POST", "DELETE"])
+def toggle_bookmark(study_id):
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return jsonify({"error": "Not authenticated"}), 401
+
+    token_str = auth_header.split(" ")[1]
+
+    try:
+        payload = jwt.decode(token_str, SECRET_KEY, algorithms=["HS256"])
+        user_id = payload["user_id"]
+    except:
+        return jsonify({"error": "Invalid token"}), 401
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+        try:
+            cursor.execute("""
+                INSERT INTO bookmarks (user_id, study_id) VALUES (?, ?)
+            """, (user_id, study_id))
+            conn.commit()
+            conn.close()
+            return jsonify({"message": "Bookmarked"}), 201
+        except:
+            conn.close()
+            return jsonify({"error": "Already bookmarked"}), 400
+
+    elif request.method == "DELETE":
+        cursor.execute("""
+            DELETE FROM bookmarks WHERE user_id = ? AND study_id = ?
+        """, (user_id, study_id))
+        conn.commit()
+        conn.close()
+        return jsonify({"message": "Bookmark removed"}), 200
+
+        
 # run the app and server restarts automatically when code is changed
 if __name__ == "__main__":
     app.run(debug=False, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))

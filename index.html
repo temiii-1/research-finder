@@ -168,8 +168,9 @@
         updateNav();
         // Fetch studies from Flask API
         async function loadStudies() {
-            const response = await fetch("https://research-finder-fze4.onrender.com/studies");
+            const response = await fetch("http://127.0.0.1:5000/studies");
             allStudies = await response.json();
+             await loadBookmarks();
             populateCategoryFilter(allStudies);
             displayStudies(sortStudies(filterStudies(allStudies)));
         }
@@ -229,9 +230,6 @@
             const match = contact.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
             return match ? match[0] : null;
         }
-
-
-
         
 
         function displayStudies(studies) {
@@ -249,8 +247,15 @@
             studies.forEach(study => {
                 const card = document.createElement("div");
                 card.className = "study-card";
+                card.style.position = "relative";
                 card.innerHTML = `
-                    <div class="study-title">${study.title}</div>
+                    <div class="study-title" style="padding-right: 40px;">${study.title}</div>
+                    <button 
+                        id="bookmark-btn-${study.id}" 
+                        onclick="toggleBookmark(${study.id})"
+                        style="background: none; border: none; font-size: 22px; cursor: pointer; color: ${bookmarkedIds.has(study.id) ? '#bf5700' : '#ccc'}; padding: 0; position: absolute; top: 12px; right: 12px; line-height: 1;">
+                        ${bookmarkedIds.has(study.id) ? '★' : '☆'}
+                    </button>
                     <div class="study-category" style="color: #bf5700; font-size: 14px; margin-bottom: 6px;">${study.category}</div>
                     <div class="study-date">Posted: ${study.date}</div>
                     <div class="study-compensation">${study.compensation || "Compensation not listed"}</div>
@@ -287,7 +292,10 @@
         function toggleDetails(id) {
             const details = document.getElementById(`details-${id}`);
             const preview = document.getElementById(`preview-${id}`); 
-            const btn = document.getElementById(`btn-${id}`);
+            const btn = document.getElementById(`bookmark-btn-${studyId}`);
+            btn.style.color = bookmarkedIds.has(studyId) ? '#bf5700' : '#ccc';
+
+            
             if (details.style.display === "none") {
                 details.style.display = "block";
                 preview.style.display = "none";
@@ -296,6 +304,51 @@
                 details.style.display = "none";
                 preview.style.display = "block";
                 btn.textContent = "Show More";
+            }
+        }
+
+
+        let bookmarkedIds = new Set();
+
+        async function loadBookmarks() {
+            const token = localStorage.getItem("token");
+            if (!token) return;
+
+            const response = await fetch(`http://127.0.0.1:5000/bookmarks`, {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                const bookmarks = await response.json();
+                bookmarkedIds = new Set(bookmarks.map(b => b.id));
+            }
+        }
+
+        async function toggleBookmark(studyId) {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            const isBookmarked = bookmarkedIds.has(studyId);
+            const method = isBookmarked ? "DELETE" : "POST";
+
+            const response = await fetch(`http://127.0.0.1:5000/bookmarks/${studyId}`, {
+                method: method,
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                if (isBookmarked) {
+                    bookmarkedIds.delete(studyId);
+                } else {
+                    bookmarkedIds.add(studyId);
+                }
+                // Update button appearance
+                const btn = document.getElementById(`bookmark-btn-${studyId}`);
+                btn.textContent = bookmarkedIds.has(studyId) ? '★' : '☆';
+                btn.style.color = bookmarkedIds.has(studyId) ? '#bf5700' : '#ccc';
             }
         }
 
