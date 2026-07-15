@@ -115,15 +115,6 @@
 </head>
 <body>
 
-    <!-- <div class="header-nav">
-        <a href="index.html">← Back to studies</a>
-        <div>
-            <span id="user-email" style="margin-right: 15px; color: #555;"></span>
-            <a href="#" onclick="logout()">Log out</a>
-        </div>
-    </div> -->
-
-
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <a href="index.html" style="text-decoration: none;"><h1 style="margin: 0; color: #bf5700;">Horns Research Hub</h1></a>
         <div>
@@ -187,7 +178,7 @@
     <div id="recommendations-container"></div>
 
     <script>
-        const API = "https://research-finder-fze4.onrender.com";
+        const API = "http://127.0.0.1:5000";
         const token = localStorage.getItem("token");
         const email = localStorage.getItem("email");
 
@@ -204,14 +195,57 @@
             window.location.href = "index.html";
         } 
 
+        async function loadRecommendations() {
+            const response = await fetch(`${API}/recommendations`, {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+
+            if (!response.ok) return;
+
+            const result = await response.json();
+            const placeholder = document.getElementById("recommendations-placeholder");
+            const container = document.getElementById("recommendations-container");
+
+            if (!result.recommendations || result.recommendations.length === 0) return;
+
+            placeholder.style.display = "none";
+
+            result.recommendations.forEach(rec => {
+                const card = document.createElement("div");
+                card.className = "study-card";
+                card.innerHTML = `
+                    <div class="study-title" style="padding-right: 40px;">${rec.title}</div>
+                    <div class="study-category">${rec.category}</div>
+                    <div class="study-compensation">${rec.compensation || "Compensation not listed"}</div>
+                    <div style="background-color: #fff8f0; border-left: 3px solid #bf5700; padding: 10px; margin: 10px 0; font-style: italic; color: #555;">
+                        💡 ${rec.reason}
+                    </div>
+                    <p>${rec.description.replace("Description (purpose of the study):", "").substring(0, 200)}...</p>
+                    <p><strong>Contact:</strong> ${rec.contact || "No contact info listed"}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
         async function loadProfile() {
+            console.log("token:", token); 
+            console.log("API:", API);
+
+            console.log("token:", token);
+
+            console.log("fetching:", `${API}/profile`);
+
             const response = await fetch(`${API}/profile`, {
                 headers: { "Authorization": `Bearer ${token}` }
             });
 
+                console.log("profile response status:", response.status);
+
             if (!response.ok) {
                 return;
             }
+
+            
 
             const profile = await response.json();
 
@@ -251,22 +285,22 @@
         }
 
         async function removeBookmark(studyId, btn) {
-    const response = await fetch(`${API}/bookmarks/${studyId}`, {
-        method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` }
-    });
+            const response = await fetch(`${API}/bookmarks/${studyId}`, {
+                method: "DELETE",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
 
-    if (response.ok) {
-        // Remove the card from the page
-        btn.closest(".study-card").remove();
+            if (response.ok) {
+                // Remove the card from the page
+                btn.closest(".study-card").remove();
 
-        // If no bookmarks left show placeholder
-        const container = document.getElementById("bookmarks-container");
-        if (container.children.length === 0) {
-            document.getElementById("bookmarks-placeholder").style.display = "block";
+                // If no bookmarks left show placeholder
+                const container = document.getElementById("bookmarks-container");
+                if (container.children.length === 0) {
+                    document.getElementById("bookmarks-placeholder").style.display = "block";
+                }
+            }
         }
-    }
-}
 
         async function loadBookmarks() {
         const response = await fetch(`${API}/bookmarks`, {
@@ -321,10 +355,15 @@
             `;
             container.appendChild(card);
         });
+
+        
+
     }
 
         loadProfile();
         loadBookmarks();
+        loadRecommendations();
+
     </script>
 
 </body>

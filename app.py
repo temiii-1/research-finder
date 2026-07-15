@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from datetime import date, datetime, timedelta
+from groq import Groq
+from dotenv import load_dotenv
 import sqlite3 
 import json
 import os
@@ -8,8 +10,11 @@ import bcrypt
 import jwt
 import urllib.request
 
+load_dotenv()
 
-SECRET_KEY = "ut-research-finder-secret-key-2026-make-it-long"  # Replace with a secure key in production
+SECRET_KEY = os.environ.get("SECRET_KEY")
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+groq_client = Groq(api_key=GROQ_API_KEY)
 
 
 app = Flask(__name__) #creates the web app
@@ -21,6 +26,9 @@ def get_db():
     conn.row_factory = sqlite3.Row  # allows access to columns by name instead of index
     return conn
 
+@app.route("/test", methods=["GET"])
+def test():
+    return jsonify({"message": "test works"}), 200
 
 # returns all studies in the database as a JSON 
 @app.route("/studies", methods=["GET"])
@@ -157,66 +165,12 @@ def login():
     return jsonify({"token": token, "message": "Login successful"}), 200
 
 
-@app.route("/profile", methods=["POST"])
-def save_profile():
-    # Get token from Authorization header
-    auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        return jsonify({"error": "Not authenticated"}), 401
+@app.route("/profile", methods=["GET", "POST", "OPTIONS"])
+def user_profile():
 
-    token = auth_header.split(" ")[1]
+    if request.method == "OPTIONS":
+        return jsonify({}), 200
 
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        user_id = payload["user_id"]
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Session expired, please log in again"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Invalid token"}), 401
-
-    data = request.get_json()
-
-    conn = get_db()
-    cursor = conn.cursor()
-
-    # Check if profile already exists
-    cursor.execute("SELECT id FROM profiles WHERE user_id = ?", (user_id,))
-    existing = cursor.fetchone()
-
-    if existing:
-        # Update existing profile
-        cursor.execute("""
-            UPDATE profiles SET age=?, major=?, interests=?, availability=?, medical_conditions=?
-            WHERE user_id=?
-        """, (
-            data.get("age"),
-            data.get("major"),
-            data.get("interests"),
-            data.get("availability"),
-            data.get("medical_conditions"),
-            user_id
-        ))
-    else:
-        # Insert new profile
-        cursor.execute("""
-            INSERT INTO profiles (user_id, age, major, interests, availability, medical_conditions)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (
-            user_id,
-            data.get("age"),
-            data.get("major"),
-            data.get("interests"),
-            data.get("availability"),
-            data.get("medical_conditions")
-        ))
-
-    conn.commit()
-    conn.close()
-
-    return jsonify({"message": "Profile saved successfully"}), 200
-
-@app.route("/profile", methods=["GET"])
-def get_profile():
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
         return jsonify({"error": "Not authenticated"}), 401
@@ -229,138 +183,60 @@ def get_profile():
     except:
         return jsonify({"error": "Invalid token"}), 401
 
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM profiles WHERE user_id = ?", (user_id,))
-    profile = cursor.fetchone()
-    conn.close()
+    if request.method == "POST":
+        data = request.get_json()
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT id FROM profiles WHERE user_id = ?", (user_id,))
+        existing = cursor.fetchone()
 
-    if not profile:
-        return jsonify({"error": "No profile found"}), 404
+        if existing:
+            cursor.execute("""
+                UPDATE profiles SET age=?, major=?, interests=?, availability=?, medical_conditions=?
+                WHERE user_id=?
+            """, (
+                data.get("age"),
+                data.get("major"),
+                data.get("interests"),
+                data.get("availability"),
+                data.get("medical_conditions"),
+                user_id
+            ))
+        else:
+            cursor.execute("""
+                INSERT INTO profiles (user_id, age, major, interests, availability, medical_conditions)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (
+                user_id,
+                data.get("age"),
+                data.get("major"),
+                data.get("interests"),
+                data.get("availability"),
+                data.get("medical_conditions")
+            ))
 
-    return jsonify({
-        "age": profile["age"],
-        "major": profile["major"],
-        "interests": profile["interests"],
-        "availability": profile["availability"]
-    }), 200
-
-@app.route("/recommendations", methods=["GET"])
-def get_recommendations():
-    auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        return jsonify({"error": "Not authenticated"}), 401
-
-    token_str = auth_header.split(" ")[1]
-
-    try:
-        payload = jwt.decode(token_str, SECRET_KEY, algorithms=["HS256"])
-        user_id = payload["user_id"]
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Session expired"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Invalid token"}), 401
-
-    # Get user profile
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM profiles WHERE user_id = ?", (user_id,))
-    profile = cursor.fetchone()
-
-    if not profile:
+        conn.commit()
         conn.close()
-        return jsonify({"error": "Please complete your profile first"}), 400
+        return jsonify({"message": "Profile saved successfully"}), 200
 
-    # Get all studies
-    cursor.execute("SELECT * FROM studies")
-    rows = cursor.fetchall()
-    conn.close()
+    else:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM profiles WHERE user_id = ?", (user_id,))
+        prof = cursor.fetchone()
+        conn.close()
 
-    studies = []
-    for row in rows:
-        studies.append({
-            "id": row["id"],
-            "title": row["title"],
-            "category": row["category"],
-            "description": row["description"],
-            "eligibility": json.loads(row["eligibility"]) if row["eligibility"] else [],
-            "compensation": row["compensation"],
-            "contact": row["contact"]
-        })
+        if not prof:
+            return jsonify({"error": "No profile found"}), 404
 
-    # Build prompt for Claude
-    profile_text = f"""
-    Age: {profile["age"]}
-    Major: {profile["major"]}
-    Interests: {profile["interests"]}
-    Availability: {profile["availability"]}
-    Medical/Personal Background: {profile["medical_conditions"]}
-    """
+        return jsonify({
+            "age": prof["age"],
+            "major": prof["major"],
+            "interests": prof["interests"],
+            "availability": prof["availability"]
+        }), 200
 
-    studies_text = ""
-    for s in studies:
-        studies_text += f"""
-    ID: {s["id"]}
-    Title: {s["title"]}
-    Category: {s["category"]}
-    Description: {s["description"][:300]}
-    Eligibility: {", ".join(s["eligibility"][:3])}
-    ---
-    """
 
-    prompt = f"""You are a research study matcher for UT Austin students.
-
-Here is the student's profile:
-{profile_text}
-
-Here are the available studies:
-{studies_text}
-
-Pick the top 5 studies that best match this student's profile, age, interests, and background.
-For each match, provide a brief personalized reason why it suits them.
-
-Respond ONLY with a JSON array like this:
-[
-  {{"id": 1, "reason": "This study matches your interest in anxiety research and you meet the age requirement"}},
-  {{"id": 2, "reason": "..."}}
-]
-
-Return only the JSON array, no other text."""
-
-    # Call Claude API
-    api_request = urllib.request.Request(
-        "https://api.anthropic.com/v1/messages",
-        data=json.dumps({
-            "model": "claude-sonnet-4-6",
-            "max_tokens": 1000,
-            "messages": [{"role": "user", "content": prompt}]
-        }).encode("utf-8"),
-        headers={
-            "Content-Type": "application/json",
-            "anthropic-version": "2023-06-01"
-        },
-        method="POST"
-    )
-
-    with urllib.request.urlopen(api_request) as api_response:
-        api_data = json.loads(api_response.read())
-
-    ai_text = api_data["content"][0]["text"]
-    matches = json.loads(ai_text)
-
-    # Build response with full study details
-    recommendations = []
-    study_map = {s["id"]: s for s in studies}
-
-    for match in matches:
-        study = study_map.get(match["id"])
-        if study:
-            recommendations.append({
-                **study,
-                "reason": match["reason"]
-            })
-
-    return jsonify({"recommendations": recommendations}), 200
 
 @app.route("/categories", methods=["GET"])
 def get_categories():
@@ -450,7 +326,97 @@ def toggle_bookmark(study_id):
         conn.close()
         return jsonify({"message": "Bookmark removed"}), 200
 
-        
+@app.route("/recommendations", methods=["GET"])
+def get_recommendations():
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return jsonify({"error": "Not authenticated"}), 401
+
+    token_str = auth_header.split(" ")[1]
+
+    try:
+        payload = jwt.decode(token_str, SECRET_KEY, algorithms=["HS256"])
+        user_id = payload["user_id"]
+    except:
+        return jsonify({"error": "Invalid token"}), 401
+
+    # Get user profile
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM profiles WHERE user_id = ?", (user_id,))
+    prof = cursor.fetchone()
+
+    if not prof:
+        conn.close()
+        return jsonify({"error": "Please complete your profile first"}), 400
+
+    # Get all studies
+    cursor.execute("SELECT * FROM studies")
+    rows = cursor.fetchall()
+    conn.close()
+
+    studies = []
+    for row in rows:
+        studies.append({
+            "id": row["id"],
+            "title": row["title"],
+            "category": row["category"],
+            "description": row["description"][:200],
+            "eligibility": json.loads(row["eligibility"]) if row["eligibility"] else [],
+            "compensation": row["compensation"],
+            "contact": row["contact"]
+        })
+
+    # Build prompt
+    profile_text = f"""
+    Age: {prof["age"]}
+    Major: {prof["major"]}
+    Interests: {prof["interests"]}
+    Availability: {prof["availability"]}
+    """
+
+    studies_text = ""
+    for s in studies:
+        studies_text += f"ID: {s['id']} | Title: {s['title']} | Category: {s['category']} | Eligibility: {', '.join(s['eligibility'][:2])}\n"
+
+    prompt = f"""You are a research study matcher for UT Austin students.
+
+Student profile:
+{profile_text}
+
+Available studies:
+{studies_text}
+
+Pick the top 5 studies that best match this student based on their interests, age, and background.
+Respond ONLY with a JSON array like this, no other text:
+[
+  {{"id": 1, "reason": "Matches your interest in anxiety research and you meet the age requirement"}},
+  {{"id": 2, "reason": "..."}}
+]"""
+
+    # Call Groq API
+    chat_completion = groq_client.chat.completions.create(
+        messages=[{"role": "user", "content": prompt}],
+        model="llama-3.3-70b-versatile"
+    )
+
+    ai_text = chat_completion.choices[0].message.content.strip()
+    
+    # Parse JSON response
+    matches = json.loads(ai_text)
+
+    # Build full study details
+    study_map = {s["id"]: s for s in studies}
+    recommendations = []
+    for match in matches:
+        study = study_map.get(match["id"])
+        if study:
+            recommendations.append({
+                **study,
+                "reason": match["reason"]
+            })
+
+    return jsonify({"recommendations": recommendations}), 200    
 # run the app and server restarts automatically when code is changed
 if __name__ == "__main__":
     app.run(debug=False, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
