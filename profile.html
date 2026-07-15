@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile | Horns Research Hub</title>
+    <title>My Profile | Study Participant Hub</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -116,7 +116,7 @@
 <body>
 
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <a href="index.html" style="text-decoration: none;"><h1 style="margin: 0; color: #bf5700;">Horns Research Hub</h1></a>
+        <a href="index.html" style="text-decoration: none;"><h1 style="margin: 0; color: #bf5700;">Study Participant Hub</h1></a>
         <div>
             <span id="user-email" style="margin-right: 15px; color: #555;"></span>
             <a href="#" onclick="logout()">Log out</a>
@@ -178,7 +178,7 @@
     <div id="recommendations-container"></div>
 
     <script>
-        const API = "http://127.0.0.1:5000";
+        const API = "https://study-participant-hub.onrender.com";
         const token = localStorage.getItem("token");
         const email = localStorage.getItem("email");
 
@@ -194,6 +194,21 @@
             localStorage.removeItem("email");
             window.location.href = "index.html";
         } 
+
+        function toggleRecDetails(id) {
+            const details = document.getElementById(`rec-details-${id}`);
+            const preview = document.getElementById(`rec-preview-${id}`);
+            const btn = document.getElementById(`rec-btn-${id}`);
+            if (details.style.display === "none") {
+                details.style.display = "block";
+                preview.style.display = "none";
+                btn.textContent = "Show Less";
+            } else {
+                details.style.display = "none";
+                preview.style.display = "block";
+                btn.textContent = "Show More";
+            }
+        }
 
         async function loadRecommendations() {
             const response = await fetch(`${API}/recommendations`, {
@@ -213,15 +228,50 @@
             result.recommendations.forEach(rec => {
                 const card = document.createElement("div");
                 card.className = "study-card";
+                // card.innerHTML = `
+                //     <div class="study-title" style="padding-right: 40px;">${rec.title}</div>
+                //     <div class="study-category">${rec.category}</div>
+                //     <div class="study-compensation">${rec.compensation || "Compensation not listed"}</div>
+                //     <div style="background-color: #fff8f0; border-left: 3px solid #bf5700; padding: 10px; margin: 10px 0; font-style: italic; color: #555;">
+                //         💡 ${rec.reason}
+                //     </div>
+                //     <p>${rec.description.replace("Description (purpose of the study):", "").substring(0, 200)}...</p>
+                //     <p><strong>Contact:</strong> ${rec.contact || "No contact info listed"}</p>
+                // `;
                 card.innerHTML = `
-                    <div class="study-title" style="padding-right: 40px;">${rec.title}</div>
-                    <div class="study-category">${rec.category}</div>
-                    <div class="study-compensation">${rec.compensation || "Compensation not listed"}</div>
-                    <div style="background-color: #fff8f0; border-left: 3px solid #bf5700; padding: 10px; margin: 10px 0; font-style: italic; color: #555;">
-                        💡 ${rec.reason}
+                    <div style="position: relative;">
+                        <div class="study-title" style="padding-right: 40px;">${rec.title}</div>
+                        <div class="study-category">${rec.category}</div>
+                        <div class="study-compensation">${rec.compensation || "Compensation not listed"}</div>
+                        <div style="background-color: #fff8f0; border-left: 3px solid #bf5700; padding: 10px; margin: 10px 0; font-style: italic; color: #555;">
+                            💡 ${rec.reason}
+                        </div>
+                        <div id="rec-preview-${rec.id}">
+                            <p>${rec.description.replace("Description (purpose of the study):", "").substring(0, 200)}...</p>
+                        </div>
+                        <div id="rec-details-${rec.id}" style="display:none;">
+                            <hr>
+                            <p>${rec.description.replace("Description (purpose of the study):", "").trim()}</p>
+                            <p><strong>Eligibility:</strong></p>
+                            <ul>
+                                ${rec.eligibility.map(item => {
+                                    if (item.startsWith("**")) {
+                                        return `<li style="list-style:none; font-weight:bold; margin-top:8px;">${item.replace(/\*\*/g, "")}</li>`;
+                                    }
+                                    return `<li style="margin-left:20px;">${item.trim()}</li>`;
+                                }).join("")}
+                            </ul>
+                            <p><strong>Contact:</strong> ${rec.contact ? rec.contact.replace("Contact:", "").trim() : "No contact info listed"}</p>
+                            ${rec.contact && rec.contact.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/) ? `
+                                <a href="mailto:${rec.contact.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)[0]}?subject=${encodeURIComponent('Interest in Study: ' + rec.title)}&body=${encodeURIComponent('Hello,\n\nI am a UT Austin student and I believe I meet the eligibility requirements for your study "' + rec.title + '". I would love to learn more about the next steps to participate.\n\nThank you!')}">
+                                    <button>Contact Researcher</button>
+                                </a>
+                            ` : ""}
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <button onclick="toggleRecDetails(${rec.id})" id="rec-btn-${rec.id}">Show More</button>
+                        </div>
                     </div>
-                    <p>${rec.description.replace("Description (purpose of the study):", "").substring(0, 200)}...</p>
-                    <p><strong>Contact:</strong> ${rec.contact || "No contact info listed"}</p>
                 `;
                 container.appendChild(card);
             });

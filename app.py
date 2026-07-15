@@ -361,7 +361,7 @@ def get_recommendations():
             "id": row["id"],
             "title": row["title"],
             "category": row["category"],
-            "description": row["description"][:200],
+            "description": row["description"],
             "eligibility": json.loads(row["eligibility"]) if row["eligibility"] else [],
             "compensation": row["compensation"],
             "contact": row["contact"]
