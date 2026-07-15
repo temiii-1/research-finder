@@ -26,9 +26,9 @@ def get_db():
     conn.row_factory = sqlite3.Row  # allows access to columns by name instead of index
     return conn
 
-@app.route("/test", methods=["GET"])
-def test():
-    return jsonify({"message": "test works"}), 200
+@app.route("/", methods=["GET"])
+def index():
+    return jsonify({"message": "Research Participant Hub API is running"}), 200
 
 # returns all studies in the database as a JSON 
 @app.route("/studies", methods=["GET"])
