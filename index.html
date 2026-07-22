@@ -5,26 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study Participant Hub</title>
     <style>
-        /* body {
+  
+        body {
             font-family: Arial, sans-serif;
-            max-width: 900px;
-            margin: 0 auto;
+            margin: 0;
             padding: 20px;
             background-color: #f5f5f5;
-        } */
+        }
 
-        body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f5f5f5;
-}
-
-.content {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-}
+        .content {
+            max-width: 1150px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
         h1 {
             color: #bf5700;  
@@ -75,14 +68,15 @@
             max-width: 150px;
         }
 
-        /* .full-width-header {
-            background-color: #bf5700;
-            padding: 15px 30px;
+        .header-content {
+            max-width: 1150px;
+            margin: 0 auto;
+            padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: -20px -20px 20px -20px;
-        } */
+            width: 100%
+        }
 
         .full-width-header {
             background-color: #bf5700;
@@ -90,6 +84,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin: -20px -20px 20px -20px;
         }
 
         .full-width-header h1 {
@@ -141,300 +136,299 @@
     </div> -->
 
     <div class="full-width-header">
-        <a href="index.html" style="text-decoration: none;"><h1 style="margin: 0; color: white;">Study Participant Hub</h1></a>
-        <div id="auth-links"></div>
+        <div class="header-content">
+            <a href="index.html" style="text-decoration: none;"><h1 style="margin: 0; color: white;">Study Participant Hub</h1></a>
+            <div id="auth-links"></div>
+        </div>
     </div>
 
     <div class="content">
-    <p>Discover research studies at/around UT Austin looking for participants like you!</p>
-    <div id="ai-banner" style="background: #fff8f0; border-left: 4px solid #bf5700; padding: 15px; border-radius: 4px; margin-bottom: 20px; display: none;">
-        <strong>Get personalized study recommendations</strong> - 
-        Create an account and fill out your profile to receive AI-powered study matches tailored to you.
-    </div>
-    <p>Are you a researcher? <a href="submit.html" style="color: #bf5700;">Submit your study here</a></p>
+        <p>Discover research studies at/around UT Austin looking for participants like you!</p>
+        <div id="ai-banner" style="background: #fff8f0; border-left: 4px solid #bf5700; padding: 15px; border-radius: 4px; margin-bottom: 20px; display: none;">
+            <strong>Get personalized study recommendations</strong> - 
+            Create an account and fill out your profile to receive AI-powered study matches tailored to you.
+        </div>
+        <p>Are you a researcher? <a href="submit.html" style="color: #bf5700;">Submit your study here</a></p>
 
-    <select id="compensation-filter">
-        <option value="all">All Studies</option>
-        <option value="paid">Paid Only</option>
-        <option value="unpaid">Unpaid Only</option>
-    </select>
+        <select id="compensation-filter">
+            <option value="all">All Studies</option>
+            <option value="paid">Paid Only</option>
+            <option value="unpaid">Unpaid Only</option>
+        </select>
 
-    <select id="age-filter">
-        <option value = "all">All Ages</option>
-        <option value="18">18+</option>
-        <option value="21">21+</option>
-    </select>
+        <select id="age-filter">
+            <option value = "all">All Ages</option>
+            <option value="18">18+</option>
+            <option value="21">21+</option>
+        </select>
 
-    
-    
-    
-    <select id="category-filter">
-        <option value="all">All Categories</option>
-    </select>
-
-    <select id="sort-filter">
-        <option value = "newest">Descending</option>
-        <option value="oldest">Ascending</option>
-    </select>
-
-    <input type="text" id="search" placeholder="Search studies...">
-
-
-    <p id="study-count"></p>
-    <div id="loading-state" style="text-align: center; padding: 40px; display: none;">
-        <p style="font-size: 18px; color: #666;">Loading studies...</p>
-        <p style="font-size: 14px; color: #999;">First load may take up to 30 seconds while the server wakes up.</p>
-    </div>
-    <div id="studies-container"></div>
-
-    <script>
-
-        function updateNav() {
-            const token = localStorage.getItem("token");
-            const email = localStorage.getItem("email");
-            const authLinks = document.getElementById("auth-links");
-            const banner = document.getElementById("ai-banner");
-
-            if (token) {
-                banner.style.display = "none";
-                authLinks.innerHTML = `
-                    <span style="margin-right: 15px;">Hi, ${email}</span>
-                    <a href="profile.html" style="margin-right: 15px;">My Profile</a>
-                    <a href="#" onclick="logout()">Log out</a>
-                `;
-            } else {
-                banner.style.display = "block";
-                authLinks.innerHTML = `
-                    <a href="login.html" style="margin-right: 15px;">Log In</a>
-                    <a href="signup.html">Sign Up</a>
-                `;
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem("token");
-            localStorage.removeItem("email");
-            window.location.href = "index.html";
-        }
-
-        updateNav();
-        // Fetch studies from Flask API
-        async function loadStudies() {
-            document.getElementById("loading-state").style.display = "block";
-            document.getElementById("studies-container").style.display = "none";
-            document.getElementById("study-count").style.display = "none";
-
-            const response = await fetch("https://study-participant-hub.onrender.com
-/studies");
-            allStudies = await response.json();
-            await loadBookmarks();
-            populateCategoryFilter(allStudies);
-            displayStudies(sortStudies(filterStudies(allStudies)));
-
-            document.getElementById("loading-state").style.display = "none";
-            document.getElementById("studies-container").style.display = "block";
-            document.getElementById("study-count").style.display = "block";
-        }
-
-        // Filter studies based on compensation & age
-        function filterStudies(studies) {
-            const query = document.getElementById("search").value.toLowerCase();
-            const compensation = document.getElementById("compensation-filter").value;
-            const age = document.getElementById("age-filter").value; 
-            const category = document.getElementById("category-filter").value;
-
-            return studies.filter(study => {
-                const matchesSearch = study.title.toLowerCase().includes(query) ||
-                    study.description.toLowerCase().includes(query);
-
-                const matchesCompensation = compensation === "all" ||
-                    (compensation === "paid" && study.compensation) ||
-                    (compensation === "unpaid" && !study.compensation);
-                
-
-                const eligibilityText = study.eligibility.join(" ").toLowerCase(); 
-                const matchesAge = age === "all" ||
-                    (age === "18" && (eligibilityText.includes("18") || eligibilityText.includes("adults"))) ||
-                    (age === "21" && eligibilityText.includes("21"));
-                
-                const matchesCategory = category === "all" || study.category === category;
-
-                return matchesSearch && matchesCompensation && matchesAge && matchesCategory;
-            });
-        }
-
-        // Dynamically populate category filter
-        function populateCategoryFilter(studies) {
-            const select = document.getElementById("category-filter");
-            const categories = [...new Set(studies.map(study => study.category))].sort();
-            
-            categories.forEach(category => {
-                const option = document.createElement("option");
-                option.value = category;
-                option.textContent = category;
-                select.appendChild(option);
-            });
-        }
-
-
-        function sortStudies(studies) {
-            const sort = document.getElementById("sort-filter").value;
-            return [...studies].sort((a, b) => {
-                const dateA = new Date(a.date);
-                const dateB = new Date(b.date);
-                return sort === "newest" ? dateB - dateA : dateA - dateB;
-            });
-        }
-
-        function extractEmail(contact) {
-            if (!contact) return null;
-            const match = contact.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
-            return match ? match[0] : null;
-        }
         
+        
+        
+        <select id="category-filter">
+            <option value="all">All Categories</option>
+        </select>
 
-        function displayStudies(studies) {
-            const container = document.getElementById("studies-container");
-            container.innerHTML = "";
+        <select id="sort-filter">
+            <option value = "newest">Descending</option>
+            <option value="oldest">Ascending</option>
+        </select>
 
-            document.getElementById("study-count").textContent = `Showing ${studies.length} ${studies.length === 1 ? "study" : "studies"}`;
-
-
-            if(studies.length === 0) {
-                container.innerHTML = "<p>No studies found.</p>";
-                return; 
-            }
-
-            studies.forEach(study => {
-                const card = document.createElement("div");
-                card.className = "study-card";
-                card.style.position = "relative";
-                card.innerHTML = `
-                    <div class="study-title" style="padding-right: 40px;">${study.title}</div>
-                    <button 
-                        id="bookmark-btn-${study.id}" 
-                        onclick="toggleBookmark(${study.id})"
-                        style="background: none; border: none; font-size: 22px; cursor: pointer; color: ${bookmarkedIds.has(study.id) ? '#bf5700' : '#ccc'}; padding: 0; position: absolute; top: 12px; right: 12px; line-height: 1;">
-                        ${bookmarkedIds.has(study.id) ? '★' : '☆'}
-                    </button>
-                    <div class="study-category" style="color: #bf5700; font-size: 14px; margin-bottom: 6px;">${study.category}</div>
-                    <div class="study-date">Posted: ${study.date}</div>
-                    <div class="study-compensation">${study.compensation || "Compensation not listed"}</div>
-                    <div class="study-preview" id="preview-${study.id}">
-                        <div class="study-description">${study.description.replace("Description (purpose of the study):", "").substring(0, 200)}...</div>
-
-                    </div>
-                    <div class="study-details" id="details-${study.id}" style="display:none;">
-                        <hr>
-                        <p>${study.description.replace("Description (purpose of the study):", "").trim()}</p>
-                        <p><strong>Eligibility:</strong></p>
-                        <ul>
-                            ${study.eligibility.map(item => {
-                                if (item.startsWith("**")) {
-                                    return `<li style="list-style:none; font-weight:bold; margin-top:8px;">${item.replace(/\*\*/g, "")}</li>`;
-                                }
-                                return `<li style="margin-left:20px;">${item.trim()}</li>`;
-                            }).join("")}
-                        </ul>
-                        <p><strong>Contact:</strong> ${study.contact.replace("Contact:", "").trim() || "No contact info listed"}</p>
-                        
-                        ${extractEmail(study.contact) ? `
-                            <a href="mailto:${extractEmail(study.contact)}?subject=${encodeURIComponent('Interest in Study: ' + study.title)}&body=${encodeURIComponent('Hello,\n\nI am a UT Austin student and I believe I meet the eligibility requirements for your study "' + study.title + '". I would love to learn more about the next steps to participate.\n\nThank you!')}">
-                                <button>Contact Researcher</button>
-                            </a>
-                        ` : ""}
-                    </div>
-                    <button onclick="toggleDetails(${study.id})" id="btn-${study.id}">Show More</button>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function toggleDetails(id) {
-            const details = document.getElementById(`details-${id}`);
-            const preview = document.getElementById(`preview-${id}`); 
-            const btn = document.getElementById(`btn-${id}`);
-
-            if (details.style.display === "none") {
-                details.style.display = "block";
-                preview.style.display = "none";
-                btn.textContent = "Show Less";
-            } else {
-                details.style.display = "none";
-                preview.style.display = "block";
-                btn.textContent = "Show More";
-            }
-        }
+        <input type="text" id="search" placeholder="Search studies...">
 
 
-        let bookmarkedIds = new Set();
+        <p id="study-count"></p>
+        <div id="loading-state" style="text-align: center; padding: 40px; display: none;">
+            <p style="font-size: 18px; color: #666;">Loading studies...</p>
+            <p style="font-size: 14px; color: #999;">First load may take up to 30 seconds while the server wakes up.</p>
+        </div>
+        <div id="studies-container"></div>
 
-        async function loadBookmarks() {
-            const token = localStorage.getItem("token");
-            if (!token) return;
+        <script>
 
-            const response = await fetch(`https://study-participant-hub.onrender.com
-/bookmarks`, {
-                headers: { "Authorization": `Bearer ${token}` }
-            });
+            function updateNav() {
+                const token = localStorage.getItem("token");
+                const email = localStorage.getItem("email");
+                const authLinks = document.getElementById("auth-links");
+                const banner = document.getElementById("ai-banner");
 
-            if (response.ok) {
-                const bookmarks = await response.json();
-                bookmarkedIds = new Set(bookmarks.map(b => b.id));
-            }
-        }
-
-        async function toggleBookmark(studyId) {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                window.location.href = "login.html";
-                return;
-            }
-
-            const isBookmarked = bookmarkedIds.has(studyId);
-            const method = isBookmarked ? "DELETE" : "POST";
-
-            const response = await fetch(`https://study-participant-hub.onrender.com
-/bookmarks/${studyId}`, {
-                method: method,
-                headers: { "Authorization": `Bearer ${token}` }
-            });
-
-            if (response.ok) {
-                if (isBookmarked) {
-                    bookmarkedIds.delete(studyId);
+                if (token) {
+                    banner.style.display = "none";
+                    authLinks.innerHTML = `
+                        <span style="margin-right: 15px;">Hi, ${email}</span>
+                        <a href="profile.html" style="margin-right: 15px;">My Profile</a>
+                        <a href="#" onclick="logout()">Log out</a>
+                    `;
                 } else {
-                    bookmarkedIds.add(studyId);
+                    banner.style.display = "block";
+                    authLinks.innerHTML = `
+                        <a href="login.html" style="margin-right: 15px;">Log In</a>
+                        <a href="signup.html">Sign Up</a>
+                    `;
                 }
-                // Update button appearance
-                const btn = document.getElementById(`bookmark-btn-${studyId}`);
-                btn.textContent = bookmarkedIds.has(studyId) ? '★' : '☆';
-                btn.style.color = bookmarkedIds.has(studyId) ? '#bf5700' : '#ccc';
             }
-        }
 
-        document.getElementById("search").addEventListener("input", function() {
-            displayStudies(sortStudies(filterStudies(allStudies))); 
-        });
+            function logout() {
+                localStorage.removeItem("token");
+                localStorage.removeItem("email");
+                window.location.href = "index.html";
+            }
 
-        document.getElementById("compensation-filter").addEventListener("change", function() {
-            displayStudies(sortStudies(filterStudies(allStudies)));
-        });
+            updateNav();
+            // Fetch studies from Flask API
+            async function loadStudies() {
+                document.getElementById("loading-state").style.display = "block";
+                document.getElementById("studies-container").style.display = "none";
+                document.getElementById("study-count").style.display = "none";
 
-        document.getElementById("age-filter").addEventListener("change", function() {
-            displayStudies(sortStudies(filterStudies(allStudies)));
-        });
+                const response = await fetch("http://127.0.0.1:5000/studies");
+                allStudies = await response.json();
+                await loadBookmarks();
+                populateCategoryFilter(allStudies);
+                displayStudies(sortStudies(filterStudies(allStudies)));
 
-        document.getElementById("sort-filter").addEventListener("change", function() {
-            displayStudies(sortStudies(filterStudies(allStudies)));
-        });
+                document.getElementById("loading-state").style.display = "none";
+                document.getElementById("studies-container").style.display = "block";
+                document.getElementById("study-count").style.display = "block";
+            }
 
-        document.getElementById("category-filter").addEventListener("change", function() {
-            displayStudies(sortStudies(filterStudies(allStudies)));
-        });
+            // Filter studies based on compensation & age
+            function filterStudies(studies) {
+                const query = document.getElementById("search").value.toLowerCase();
+                const compensation = document.getElementById("compensation-filter").value;
+                const age = document.getElementById("age-filter").value; 
+                const category = document.getElementById("category-filter").value;
 
-        loadStudies();
-    </script>
+                return studies.filter(study => {
+                    const matchesSearch = study.title.toLowerCase().includes(query) ||
+                        study.description.toLowerCase().includes(query);
+
+                    const matchesCompensation = compensation === "all" ||
+                        (compensation === "paid" && study.compensation) ||
+                        (compensation === "unpaid" && !study.compensation);
+                    
+
+                    const eligibilityText = study.eligibility.join(" ").toLowerCase(); 
+                    const matchesAge = age === "all" ||
+                        (age === "18" && (eligibilityText.includes("18") || eligibilityText.includes("adults"))) ||
+                        (age === "21" && eligibilityText.includes("21"));
+                    
+                    const matchesCategory = category === "all" || study.category === category;
+
+                    return matchesSearch && matchesCompensation && matchesAge && matchesCategory;
+                });
+            }
+
+            // Dynamically populate category filter
+            function populateCategoryFilter(studies) {
+                const select = document.getElementById("category-filter");
+                const categories = [...new Set(studies.map(study => study.category))].sort();
+                
+                categories.forEach(category => {
+                    const option = document.createElement("option");
+                    option.value = category;
+                    option.textContent = category;
+                    select.appendChild(option);
+                });
+            }
+
+
+            function sortStudies(studies) {
+                const sort = document.getElementById("sort-filter").value;
+                return [...studies].sort((a, b) => {
+                    const dateA = new Date(a.date);
+                    const dateB = new Date(b.date);
+                    return sort === "newest" ? dateB - dateA : dateA - dateB;
+                });
+            }
+
+            function extractEmail(contact) {
+                if (!contact) return null;
+                const match = contact.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+                return match ? match[0] : null;
+            }
+            
+
+            function displayStudies(studies) {
+                const container = document.getElementById("studies-container");
+                container.innerHTML = "";
+
+                document.getElementById("study-count").textContent = `Showing ${studies.length} ${studies.length === 1 ? "study" : "studies"}`;
+
+
+                if(studies.length === 0) {
+                    container.innerHTML = "<p>No studies found.</p>";
+                    return; 
+                }
+
+                studies.forEach(study => {
+                    const card = document.createElement("div");
+                    card.className = "study-card";
+                    card.style.position = "relative";
+                    card.innerHTML = `
+                        <div class="study-title" style="padding-right: 40px;">${study.title}</div>
+                        <button 
+                            id="bookmark-btn-${study.id}" 
+                            onclick="toggleBookmark(${study.id})"
+                            style="background: none; border: none; font-size: 22px; cursor: pointer; color: ${bookmarkedIds.has(study.id) ? '#bf5700' : '#ccc'}; padding: 0; position: absolute; top: 12px; right: 12px; line-height: 1;">
+                            ${bookmarkedIds.has(study.id) ? '★' : '☆'}
+                        </button>
+                        <div class="study-category" style="color: #bf5700; font-size: 14px; margin-bottom: 6px;">${study.category}</div>
+                        <div class="study-date">Posted: ${study.date}</div>
+                        <div class="study-compensation">${study.compensation || "Compensation not listed"}</div>
+                        <div class="study-preview" id="preview-${study.id}">
+                            <div class="study-description">${study.description.replace("Description (purpose of the study):", "").substring(0, 200)}...</div>
+
+                        </div>
+                        <div class="study-details" id="details-${study.id}" style="display:none;">
+                            <hr>
+                            <p>${study.description.replace("Description (purpose of the study):", "").trim()}</p>
+                            <p><strong>Eligibility:</strong></p>
+                            <ul>
+                                ${study.eligibility.map(item => {
+                                    if (item.startsWith("**")) {
+                                        return `<li style="list-style:none; font-weight:bold; margin-top:8px;">${item.replace(/\*\*/g, "")}</li>`;
+                                    }
+                                    return `<li style="margin-left:20px;">${item.trim()}</li>`;
+                                }).join("")}
+                            </ul>
+                            <p><strong>Contact:</strong> ${study.contact.replace("Contact:", "").trim() || "No contact info listed"}</p>
+                            
+                            ${extractEmail(study.contact) ? `
+                                <a href="mailto:${extractEmail(study.contact)}?subject=${encodeURIComponent('Interest in Study: ' + study.title)}&body=${encodeURIComponent('Hello,\n\nI am a UT Austin student and I believe I meet the eligibility requirements for your study "' + study.title + '". I would love to learn more about the next steps to participate.\n\nThank you!')}">
+                                    <button>Contact Researcher</button>
+                                </a>
+                            ` : ""}
+                        </div>
+                        <button onclick="toggleDetails(${study.id})" id="btn-${study.id}">Show More</button>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+
+            function toggleDetails(id) {
+                const details = document.getElementById(`details-${id}`);
+                const preview = document.getElementById(`preview-${id}`); 
+                const btn = document.getElementById(`btn-${id}`);
+
+                if (details.style.display === "none") {
+                    details.style.display = "block";
+                    preview.style.display = "none";
+                    btn.textContent = "Show Less";
+                } else {
+                    details.style.display = "none";
+                    preview.style.display = "block";
+                    btn.textContent = "Show More";
+                }
+            }
+
+
+            let bookmarkedIds = new Set();
+
+            async function loadBookmarks() {
+                const token = localStorage.getItem("token");
+                if (!token) return;
+
+                const response = await fetch(`http://127.0.0.1:5000/bookmarks`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const bookmarks = await response.json();
+                    bookmarkedIds = new Set(bookmarks.map(b => b.id));
+                }
+            }
+
+            async function toggleBookmark(studyId) {
+                const token = localStorage.getItem("token");
+                if (!token) {
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                const isBookmarked = bookmarkedIds.has(studyId);
+                const method = isBookmarked ? "DELETE" : "POST";
+
+                const response = await fetch(`http://127.0.0.1:5000/bookmarks/${studyId}`, {
+                    method: method,
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    if (isBookmarked) {
+                        bookmarkedIds.delete(studyId);
+                    } else {
+                        bookmarkedIds.add(studyId);
+                    }
+                    // Update button appearance
+                    const btn = document.getElementById(`bookmark-btn-${studyId}`);
+                    btn.textContent = bookmarkedIds.has(studyId) ? '★' : '☆';
+                    btn.style.color = bookmarkedIds.has(studyId) ? '#bf5700' : '#ccc';
+                }
+            }
+
+            document.getElementById("search").addEventListener("input", function() {
+                displayStudies(sortStudies(filterStudies(allStudies))); 
+            });
+
+            document.getElementById("compensation-filter").addEventListener("change", function() {
+                displayStudies(sortStudies(filterStudies(allStudies)));
+            });
+
+            document.getElementById("age-filter").addEventListener("change", function() {
+                displayStudies(sortStudies(filterStudies(allStudies)));
+            });
+
+            document.getElementById("sort-filter").addEventListener("change", function() {
+                displayStudies(sortStudies(filterStudies(allStudies)));
+            });
+
+            document.getElementById("category-filter").addEventListener("change", function() {
+                displayStudies(sortStudies(filterStudies(allStudies)));
+            });
+
+            loadStudies();
+        </script>
     </div>
 </body>
 </html>

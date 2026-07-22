@@ -7,15 +7,55 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 900px;
             margin: 0 auto;
             padding: 20px;
             background-color: #f5f5f5;
         }
 
+        .content {
+            max-width: 1150px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
         h1, h2 { color: #bf5700; }
 
         a { color: #bf5700; }
+
+        .header-content {
+            max-width: 1150px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%
+        }
+
+
+        .full-width-header {
+            background-color: #bf5700;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: -20px -20px 20px -20px;
+        }
+
+        .full-width-header h1 {
+            color: white;
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .full-width-header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .full-width-header a:hover {
+            text-decoration: underline;
+        }
 
         .header-nav {
             display: flex;
@@ -115,307 +155,312 @@
 </head>
 <body>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <a href="index.html" style="text-decoration: none;"><h1 style="margin: 0; color: #bf5700;">Study Participant Hub</h1></a>
-        <div>
-            <span id="user-email" style="margin-right: 15px; color: #555;"></span>
-            <a href="#" onclick="logout()">Log out</a>
+    <div class="full-width-header">
+        <div class="header-content">
+            <a href="index.html"><h1>Study Participant Hub</h1></a>
+            <div>
+                <span id="user-email" style="margin-right: 15px;"></span>
+                <a href="#" onclick="logout()">Log out</a>
+            </div>
         </div>
     </div>
-    <a href="index.html" style="margin-bottom: 10px; display: block;">← Back to studies</a>
-
-    <!-- Profile Info Section -->
-    <div class="profile-card">
-        <div class="section-header">
-            <h2 style="margin: 0;">Profile Info</h2>
-            <button onclick="window.location.href='profile_setup.html'">Edit Profile</button>
-        </div>
-
-        <div class="profile-field">
-            <label>Email</label>
-            <p id="profile-email">—</p>
-        </div>
-
-        <div class="profile-field">
-            <label>Age</label>
-            <p id="profile-age">—</p>
-        </div>
-
-        <div class="profile-field">
-            <label>Major</label>
-            <p id="profile-major">—</p>
-        </div>
-
-        <div class="profile-field">
-            <label>Availability</label>
-            <p id="profile-availability">—</p>
-        </div>
-
-        <div class="profile-field">
-            <label>Research Interests</label>
-            <div id="profile-interests"></div>
-        </div>
-    </div>
-
     
+    <!-- Profile Info Section -->
+    <div class="content">
+        <a href="index.html" style="margin-bottom: 10px; display: block;">← Back to studies</a>
 
-    <!-- Bookmarks Section -->
-    <div class="section-header" style="margin-top: 30px;">
-        <h2 style="margin: 0;">Bookmarked Studies</h2>
-    </div>
-    <div class="placeholder" id="bookmarks-placeholder">
-        You haven't bookmarked any studies yet. Browse studies and click the bookmark icon to save them here.
-    </div>
-    <div id="bookmarks-container"></div>
 
-    <!-- Recommendations Section -->
-    <div class="section-header">
-        <h2 style="margin: 0;">Recommended Studies</h2>
-    </div>
-    <div class="placeholder" id="recommendations-placeholder">
-        AI-powered recommendations coming soon. Complete your profile to get matched with studies.
-    </div>
-    <div id="recommendations-container"></div>
+        <div class="profile-card">
+            <div class="section-header">
+                <h2 style="margin: 0;">Profile Info</h2>
+                <button onclick="window.location.href='profile_setup.html'">Edit Profile</button>
+            </div>
 
-    <script>
-        const API = "https://study-participant-hub.onrender.com
-";
-        const token = localStorage.getItem("token");
-        const email = localStorage.getItem("email");
+            <div class="profile-field">
+                <label>Email</label>
+                <p id="profile-email">—</p>
+            </div>
 
-        if (!token) {
-            window.location.href = "login.html";
-        }
+            <div class="profile-field">
+                <label>Age</label>
+                <p id="profile-age">—</p>
+            </div>
 
-        document.getElementById("user-email").textContent = email;
-        document.getElementById("profile-email").textContent = email;
+            <div class="profile-field">
+                <label>Major</label>
+                <p id="profile-major">—</p>
+            </div>
 
-        function logout() {
-            localStorage.removeItem("token");
-            localStorage.removeItem("email");
-            window.location.href = "index.html";
-        } 
+            <div class="profile-field">
+                <label>Availability</label>
+                <p id="profile-availability">—</p>
+            </div>
 
-        function toggleRecDetails(id) {
-            const details = document.getElementById(`rec-details-${id}`);
-            const preview = document.getElementById(`rec-preview-${id}`);
-            const btn = document.getElementById(`rec-btn-${id}`);
-            if (details.style.display === "none") {
-                details.style.display = "block";
-                preview.style.display = "none";
-                btn.textContent = "Show Less";
-            } else {
-                details.style.display = "none";
-                preview.style.display = "block";
-                btn.textContent = "Show More";
+            <div class="profile-field">
+                <label>Research Interests</label>
+                <div id="profile-interests"></div>
+            </div>
+        </div>
+
+        
+
+        <!-- Bookmarks Section -->
+        <div class="section-header" style="margin-top: 30px;">
+            <h2 style="margin: 0;">Bookmarked Studies</h2>
+        </div>
+        <div class="placeholder" id="bookmarks-placeholder">
+            You haven't bookmarked any studies yet. Browse studies and click the bookmark icon to save them here.
+        </div>
+        <div id="bookmarks-container"></div>
+
+        <!-- Recommendations Section -->
+        <div class="section-header">
+            <h2 style="margin: 0;">Recommended Studies</h2>
+        </div>
+        <div class="placeholder" id="recommendations-placeholder">
+            AI-powered recommendations coming soon. Complete your profile to get matched with studies.
+        </div>
+        <div id="recommendations-container"></div>
+
+        <script>
+            const API = "https://study-participant-hub.onrender.com";
+            const token = localStorage.getItem("token");
+            const email = localStorage.getItem("email");
+
+            if (!token) {
+                window.location.href = "login.html";
             }
-        }
 
-        async function loadRecommendations() {
-            const response = await fetch(`${API}/recommendations`, {
+            document.getElementById("user-email").textContent = email;
+            document.getElementById("profile-email").textContent = email;
+
+            function logout() {
+                localStorage.removeItem("token");
+                localStorage.removeItem("email");
+                window.location.href = "index.html";
+            } 
+
+            function toggleRecDetails(id) {
+                const details = document.getElementById(`rec-details-${id}`);
+                const preview = document.getElementById(`rec-preview-${id}`);
+                const btn = document.getElementById(`rec-btn-${id}`);
+                if (details.style.display === "none") {
+                    details.style.display = "block";
+                    preview.style.display = "none";
+                    btn.textContent = "Show Less";
+                } else {
+                    details.style.display = "none";
+                    preview.style.display = "block";
+                    btn.textContent = "Show More";
+                }
+            }
+
+            async function loadRecommendations() {
+                const response = await fetch(`${API}/recommendations`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+
+                if (!response.ok) return;
+
+                const result = await response.json();
+                const placeholder = document.getElementById("recommendations-placeholder");
+                const container = document.getElementById("recommendations-container");
+
+                if (!result.recommendations || result.recommendations.length === 0) return;
+
+                placeholder.style.display = "none";
+
+                result.recommendations.forEach(rec => {
+                    const card = document.createElement("div");
+                    card.className = "study-card";
+                    // card.innerHTML = `
+                    //     <div class="study-title" style="padding-right: 40px;">${rec.title}</div>
+                    //     <div class="study-category">${rec.category}</div>
+                    //     <div class="study-compensation">${rec.compensation || "Compensation not listed"}</div>
+                    //     <div style="background-color: #fff8f0; border-left: 3px solid #bf5700; padding: 10px; margin: 10px 0; font-style: italic; color: #555;">
+                    //         💡 ${rec.reason}
+                    //     </div>
+                    //     <p>${rec.description.replace("Description (purpose of the study):", "").substring(0, 200)}...</p>
+                    //     <p><strong>Contact:</strong> ${rec.contact || "No contact info listed"}</p>
+                    // `;
+                    card.innerHTML = `
+                        <div style="position: relative;">
+                            <div class="study-title" style="padding-right: 40px;">${rec.title}</div>
+                            <div class="study-category">${rec.category}</div>
+                            <div class="study-compensation">${rec.compensation || "Compensation not listed"}</div>
+                            <div style="background-color: #fff8f0; border-left: 3px solid #bf5700; padding: 10px; margin: 10px 0; font-style: italic; color: #555;">
+                                💡 ${rec.reason}
+                            </div>
+                            <div id="rec-preview-${rec.id}">
+                                <p>${rec.description.replace("Description (purpose of the study):", "").substring(0, 200)}...</p>
+                            </div>
+                            <div id="rec-details-${rec.id}" style="display:none;">
+                                <hr>
+                                <p>${rec.description.replace("Description (purpose of the study):", "").trim()}</p>
+                                <p><strong>Eligibility:</strong></p>
+                                <ul>
+                                    ${rec.eligibility.map(item => {
+                                        if (item.startsWith("**")) {
+                                            return `<li style="list-style:none; font-weight:bold; margin-top:8px;">${item.replace(/\*\*/g, "")}</li>`;
+                                        }
+                                        return `<li style="margin-left:20px;">${item.trim()}</li>`;
+                                    }).join("")}
+                                </ul>
+                                <p><strong>Contact:</strong> ${rec.contact ? rec.contact.replace("Contact:", "").trim() : "No contact info listed"}</p>
+                                ${rec.contact && rec.contact.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/) ? `
+                                    <a href="mailto:${rec.contact.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)[0]}?subject=${encodeURIComponent('Interest in Study: ' + rec.title)}&body=${encodeURIComponent('Hello,\n\nI am a UT Austin student and I believe I meet the eligibility requirements for your study "' + rec.title + '". I would love to learn more about the next steps to participate.\n\nThank you!')}">
+                                        <button>Contact Researcher</button>
+                                    </a>
+                                ` : ""}
+                            </div>
+                            <div style="margin-top: 10px;">
+                                <button onclick="toggleRecDetails(${rec.id})" id="rec-btn-${rec.id}">Show More</button>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+
+            async function loadProfile() {
+                console.log("token:", token); 
+                console.log("API:", API);
+
+                console.log("token:", token);
+
+                console.log("fetching:", `${API}/profile`);
+
+                const response = await fetch(`${API}/profile`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+
+                    console.log("profile response status:", response.status);
+
+                if (!response.ok) {
+                    return;
+                }
+
+                
+
+                const profile = await response.json();
+
+
+                document.getElementById("profile-age").textContent = profile.age || "—";
+                document.getElementById("profile-major").textContent = profile.major || "—";
+                document.getElementById("profile-availability").textContent = profile.availability || "—";
+
+                // Display interests as tags
+                const interestsContainer = document.getElementById("profile-interests");
+                if (profile.interests) {
+                    const interests = profile.interests.split(", ");
+                    interests.forEach(interest => {
+                        const tag = document.createElement("span");
+                        tag.className = "tag";
+                        tag.textContent = interest;
+                        interestsContainer.appendChild(tag);
+                    });
+                } else {
+                    interestsContainer.textContent = "—";
+                }
+            }
+
+            function toggleBkDetails(id) {
+                const details = document.getElementById(`bk-details-${id}`);
+                const preview = document.getElementById(`bk-preview-${id}`);
+                const btn = document.getElementById(`bk-btn-${id}`);
+                if (details.style.display === "none") {
+                    details.style.display = "block";
+                    preview.style.display = "none";
+                    btn.textContent = "Show Less";
+                } else {
+                    details.style.display = "none";
+                    preview.style.display = "block";
+                    btn.textContent = "Show More";
+                }
+            }
+
+            async function removeBookmark(studyId, btn) {
+                const response = await fetch(`${API}/bookmarks/${studyId}`, {
+                    method: "DELETE",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    // Remove the card from the page
+                    btn.closest(".study-card").remove();
+
+                    // If no bookmarks left show placeholder
+                    const container = document.getElementById("bookmarks-container");
+                    if (container.children.length === 0) {
+                        document.getElementById("bookmarks-placeholder").style.display = "block";
+                    }
+                }
+            }
+
+            async function loadBookmarks() {
+            const response = await fetch(`${API}/bookmarks`, {
                 headers: { "Authorization": `Bearer ${token}` }
             });
 
             if (!response.ok) return;
 
-            const result = await response.json();
-            const placeholder = document.getElementById("recommendations-placeholder");
-            const container = document.getElementById("recommendations-container");
+            const bookmarks = await response.json();
+            const placeholder = document.getElementById("bookmarks-placeholder");
+            const container = document.getElementById("bookmarks-container");
 
-            if (!result.recommendations || result.recommendations.length === 0) return;
+            if (bookmarks.length === 0) return;
 
             placeholder.style.display = "none";
 
-            result.recommendations.forEach(rec => {
+            bookmarks.forEach(study => {
                 const card = document.createElement("div");
                 card.className = "study-card";
-                // card.innerHTML = `
-                //     <div class="study-title" style="padding-right: 40px;">${rec.title}</div>
-                //     <div class="study-category">${rec.category}</div>
-                //     <div class="study-compensation">${rec.compensation || "Compensation not listed"}</div>
-                //     <div style="background-color: #fff8f0; border-left: 3px solid #bf5700; padding: 10px; margin: 10px 0; font-style: italic; color: #555;">
-                //         💡 ${rec.reason}
-                //     </div>
-                //     <p>${rec.description.replace("Description (purpose of the study):", "").substring(0, 200)}...</p>
-                //     <p><strong>Contact:</strong> ${rec.contact || "No contact info listed"}</p>
-                // `;
                 card.innerHTML = `
-                    <div style="position: relative;">
-                        <div class="study-title" style="padding-right: 40px;">${rec.title}</div>
-                        <div class="study-category">${rec.category}</div>
-                        <div class="study-compensation">${rec.compensation || "Compensation not listed"}</div>
-                        <div style="background-color: #fff8f0; border-left: 3px solid #bf5700; padding: 10px; margin: 10px 0; font-style: italic; color: #555;">
-                            💡 ${rec.reason}
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div class="study-title">${study.title}</div>
+                            <div class="study-category">${study.category}</div>
+                            <div class="study-compensation">${study.compensation || "Compensation not listed"}</div>
                         </div>
-                        <div id="rec-preview-${rec.id}">
-                            <p>${rec.description.replace("Description (purpose of the study):", "").substring(0, 200)}...</p>
-                        </div>
-                        <div id="rec-details-${rec.id}" style="display:none;">
-                            <hr>
-                            <p>${rec.description.replace("Description (purpose of the study):", "").trim()}</p>
-                            <p><strong>Eligibility:</strong></p>
-                            <ul>
-                                ${rec.eligibility.map(item => {
-                                    if (item.startsWith("**")) {
-                                        return `<li style="list-style:none; font-weight:bold; margin-top:8px;">${item.replace(/\*\*/g, "")}</li>`;
-                                    }
-                                    return `<li style="margin-left:20px;">${item.trim()}</li>`;
-                                }).join("")}
-                            </ul>
-                            <p><strong>Contact:</strong> ${rec.contact ? rec.contact.replace("Contact:", "").trim() : "No contact info listed"}</p>
-                            ${rec.contact && rec.contact.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/) ? `
-                                <a href="mailto:${rec.contact.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)[0]}?subject=${encodeURIComponent('Interest in Study: ' + rec.title)}&body=${encodeURIComponent('Hello,\n\nI am a UT Austin student and I believe I meet the eligibility requirements for your study "' + rec.title + '". I would love to learn more about the next steps to participate.\n\nThank you!')}">
-                                    <button>Contact Researcher</button>
-                                </a>
-                            ` : ""}
-                        </div>
-                        <div style="margin-top: 10px;">
-                            <button onclick="toggleRecDetails(${rec.id})" id="rec-btn-${rec.id}">Show More</button>
-                        </div>
+                        <button onclick="removeBookmark(${study.id}, this)" title="Remove bookmark"style="background: none; border: none; font-size: 20px; cursor: pointer; color: #bf5700; padding: 0;">★</button>
                     </div>
+                    <div id="bk-preview-${study.id}">
+                        <p>${study.description.replace("Description (purpose of the study):", "").substring(0, 200)}...</p>
+                    </div>
+                    <div id="bk-details-${study.id}" style="display:none;">
+                        <hr>
+                        <p>${study.description.replace("Description (purpose of the study):", "").trim()}</p>
+                        <p><strong>Eligibility:</strong></p>
+                        <ul>
+                            ${study.eligibility.map(item => {
+                                if (item.startsWith("**")) {
+                                    return `<li style="list-style:none; font-weight:bold; margin-top:8px;">${item.replace(/\*\*/g, "")}</li>`;
+                                }
+                                return `<li style="margin-left:20px;">${item.trim()}</li>`;
+                            }).join("")}
+                        </ul>
+                        <p><strong>Contact:</strong> ${study.contact || "No contact info listed"}</p>
+                        ${study.contact && study.contact.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/) ? `
+                            <a href="mailto:${study.contact.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)[0]}?subject=${encodeURIComponent('Interest in Study: ' + study.title)}&body=${encodeURIComponent('Hello,\n\nI am a UT Austin student and I believe I meet the eligibility requirements for your study "' + study.title + '". I would love to learn more about the next steps to participate.\n\nThank you!')}">
+                                <button style="margin-bottom: 9px;">Contact Researcher</button>
+                            </a>
+                        ` : ""}
+                    </div>
+                    <button onclick="toggleBkDetails(${study.id})" id="bk-btn-${study.id}">Show More</button>
                 `;
                 container.appendChild(card);
             });
-        }
-
-        async function loadProfile() {
-            console.log("token:", token); 
-            console.log("API:", API);
-
-            console.log("token:", token);
-
-            console.log("fetching:", `${API}/profile`);
-
-            const response = await fetch(`${API}/profile`, {
-                headers: { "Authorization": `Bearer ${token}` }
-            });
-
-                console.log("profile response status:", response.status);
-
-            if (!response.ok) {
-                return;
-            }
 
             
 
-            const profile = await response.json();
-
-
-            document.getElementById("profile-age").textContent = profile.age || "—";
-            document.getElementById("profile-major").textContent = profile.major || "—";
-            document.getElementById("profile-availability").textContent = profile.availability || "—";
-
-            // Display interests as tags
-            const interestsContainer = document.getElementById("profile-interests");
-            if (profile.interests) {
-                const interests = profile.interests.split(", ");
-                interests.forEach(interest => {
-                    const tag = document.createElement("span");
-                    tag.className = "tag";
-                    tag.textContent = interest;
-                    interestsContainer.appendChild(tag);
-                });
-            } else {
-                interestsContainer.textContent = "—";
-            }
         }
 
-        function toggleBkDetails(id) {
-            const details = document.getElementById(`bk-details-${id}`);
-            const preview = document.getElementById(`bk-preview-${id}`);
-            const btn = document.getElementById(`bk-btn-${id}`);
-            if (details.style.display === "none") {
-                details.style.display = "block";
-                preview.style.display = "none";
-                btn.textContent = "Show Less";
-            } else {
-                details.style.display = "none";
-                preview.style.display = "block";
-                btn.textContent = "Show More";
-            }
-        }
+            loadProfile();
+            loadBookmarks();
+            loadRecommendations();
 
-        async function removeBookmark(studyId, btn) {
-            const response = await fetch(`${API}/bookmarks/${studyId}`, {
-                method: "DELETE",
-                headers: { "Authorization": `Bearer ${token}` }
-            });
-
-            if (response.ok) {
-                // Remove the card from the page
-                btn.closest(".study-card").remove();
-
-                // If no bookmarks left show placeholder
-                const container = document.getElementById("bookmarks-container");
-                if (container.children.length === 0) {
-                    document.getElementById("bookmarks-placeholder").style.display = "block";
-                }
-            }
-        }
-
-        async function loadBookmarks() {
-        const response = await fetch(`${API}/bookmarks`, {
-            headers: { "Authorization": `Bearer ${token}` }
-        });
-
-        if (!response.ok) return;
-
-        const bookmarks = await response.json();
-        const placeholder = document.getElementById("bookmarks-placeholder");
-        const container = document.getElementById("bookmarks-container");
-
-        if (bookmarks.length === 0) return;
-
-        placeholder.style.display = "none";
-
-        bookmarks.forEach(study => {
-            const card = document.createElement("div");
-            card.className = "study-card";
-            card.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: start;">
-                    <div>
-                        <div class="study-title">${study.title}</div>
-                        <div class="study-category">${study.category}</div>
-                        <div class="study-compensation">${study.compensation || "Compensation not listed"}</div>
-                    </div>
-                    <button onclick="removeBookmark(${study.id}, this)" title="Remove bookmark"style="background: none; border: none; font-size: 20px; cursor: pointer; color: #bf5700; padding: 0;">★</button>
-                </div>
-                <div id="bk-preview-${study.id}">
-                    <p>${study.description.replace("Description (purpose of the study):", "").substring(0, 200)}...</p>
-                </div>
-                <div id="bk-details-${study.id}" style="display:none;">
-                    <hr>
-                    <p>${study.description.replace("Description (purpose of the study):", "").trim()}</p>
-                    <p><strong>Eligibility:</strong></p>
-                    <ul>
-                        ${study.eligibility.map(item => {
-                            if (item.startsWith("**")) {
-                                return `<li style="list-style:none; font-weight:bold; margin-top:8px;">${item.replace(/\*\*/g, "")}</li>`;
-                            }
-                            return `<li style="margin-left:20px;">${item.trim()}</li>`;
-                        }).join("")}
-                    </ul>
-                    <p><strong>Contact:</strong> ${study.contact || "No contact info listed"}</p>
-                    ${study.contact && study.contact.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/) ? `
-                        <a href="mailto:${study.contact.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)[0]}?subject=${encodeURIComponent('Interest in Study: ' + study.title)}&body=${encodeURIComponent('Hello,\n\nI am a UT Austin student and I believe I meet the eligibility requirements for your study "' + study.title + '". I would love to learn more about the next steps to participate.\n\nThank you!')}">
-                            <button style="margin-bottom: 9px;">Contact Researcher</button>
-                        </a>
-                    ` : ""}
-                </div>
-                <button onclick="toggleBkDetails(${study.id})" id="bk-btn-${study.id}">Show More</button>
-            `;
-            container.appendChild(card);
-        });
-
-        
-
-    }
-
-        loadProfile();
-        loadBookmarks();
-        loadRecommendations();
-
-    </script>
+        </script>
+    </div>
 
 </body>
 </html>
